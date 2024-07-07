@@ -1,2 +1,5 @@
+.vscode/
+__pycache__/
+
 ai_venv/
 *.htpasswd

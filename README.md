@@ -1,6 +1,6 @@
 # Steps to run
 
-## Setup
+## Project Setup
 
 `cd` to the project directory
 
