@@ -1,10 +1,8 @@
-# src/logger.py
-
 import logging
 from config import LOG_FILE_PATH
 import os
 
-# Ensure the logs directory exists
+# Create the logs directory if it does not exist
 os.makedirs(os.path.dirname(LOG_FILE_PATH), exist_ok=True)
 
 def setup_logger():

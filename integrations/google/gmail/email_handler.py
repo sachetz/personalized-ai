@@ -1,5 +1,3 @@
-# src/email_handler.py
-
 import base64
 from email import policy
 from email.parser import BytesParser

@@ -1,5 +1,3 @@
-# main.py
-
 from auth import authenticate_gmail
 from email_handler import list_emails, get_email_details
 from utils import store_emails
@@ -7,13 +5,13 @@ from logger import setup_logger
 
 def main():
     logger = setup_logger()
-    logger.info('Starting Gmail Connector')
+    logger.info("Starting Gmail Connector")
     
     # Authenticate and create Gmail service
     service = authenticate_gmail()
     
-    # Define your search query
-    query = 'newer_than:7d'  # Example query: emails from the last 7 days
+    # Define the search query
+    query = 'newer_than:7d'
     max_emails = 50  # Adjust as needed
     
     # List emails
