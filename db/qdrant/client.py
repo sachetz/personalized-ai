@@ -1,3 +1,7 @@
+"""
+Implementation of the Qdrant Vector DB Client
+"""
+
 import uuid
 
 from qdrant_client import QdrantClient
@@ -14,6 +18,10 @@ from qdrant_client.models import (
 
 
 class QdrantDBClient:
+    """
+    Qdrant Vector DB Client
+    """
+
     _instance = None
     _client = None
 
@@ -33,7 +41,7 @@ class QdrantDBClient:
 
         if not self._client:
             self._client = QdrantClient(url="http://localhost:6333")
-    
+
     def _create_index_for_collection(self, collection_name):
         """
         Index the collection for individual users.
@@ -49,13 +57,14 @@ class QdrantDBClient:
                 is_tenant=True
             )
         )
-    
+
     def create_collection(self, collection_name, size=1536, distance=Distance.DOT):
         """
         Creates a collection, and indexes it for user_id
         
         :param collection_name: Name of the collection to create
-        :param size (optional): Size of the embedding vectors, default is 1536 (OpenAI's text-embedding-3-small)
+        :param size (optional): Size of the embedding vectors,
+            default is 1536 (OpenAI's text-embedding-3-small)
         :param distance (optional): Distance metric to use, default is dot product
         """
 
@@ -96,7 +105,7 @@ class QdrantDBClient:
             )
         except Exception as e:
             raise e
-    
+
     def search(self, user_id, collection_name, query_vector, limit=10):
         """
         Search the collection for the user_id and the query vector
