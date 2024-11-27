@@ -6,5 +6,7 @@ def landing():
 
     if st.button("Logout"):
         st.session_state.is_authenticated = False
+        st.session_state.id = None
+        st.session_state.username = None
         st.session_state.current_page = "authenticate"
         st.rerun()
