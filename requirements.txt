@@ -3,4 +3,7 @@ google-auth-httplib2==0.2.0
 google-auth-oauthlib==1.2.1
 python-dotenv==1.0.1
 qdrant-client==1.12.1
-openai==1.55.1
+langchain-openai==0.2.10
+mysql-connector-python==9.1.0
+streamlit==1.40.2
+bcrypt==4.2.1

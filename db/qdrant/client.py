@@ -5,16 +5,9 @@ Implementation of the Qdrant Vector DB Client
 import uuid
 
 from qdrant_client import QdrantClient
-from qdrant_client.models import (
-    Distance,
-    VectorParams,
-    HnswConfigDiff,
-    KeywordIndexParams,
-    PointStruct,
-    Filter,
-    FieldCondition,
-    MatchValue
-)
+from qdrant_client import models
+
+from db.qdrant import config
 
 
 class QdrantDBClient:
@@ -40,7 +33,7 @@ class QdrantDBClient:
         """
 
         if not self._client:
-            self._client = QdrantClient(url="http://localhost:6333")
+            self._client = QdrantClient(url=f"http://{config.QDRANT_HOST}:{config.QDRANT_PORT}")
 
     def _create_index_for_collection(self, collection_name):
         """
@@ -52,13 +45,13 @@ class QdrantDBClient:
         self._client.create_payload_index(
             collection_name=collection_name,
             field_name="user_id",
-            field_schema=KeywordIndexParams(
+            field_schema=models.KeywordIndexParams(
                 type="keyword",
                 is_tenant=True
             )
         )
 
-    def create_collection(self, collection_name, size=1536, distance=Distance.DOT):
+    def create_collection(self, collection_name, size=1536, distance=models.Distance.DOT):
         """
         Creates a collection, and indexes it for user_id
         
@@ -72,8 +65,8 @@ class QdrantDBClient:
             # Create a collection
             self._client.create_collection(
                 collection_name=collection_name,
-                vectors_config=VectorParams(size=size, distance=distance),
-                hnsw_config=HnswConfigDiff(payload_m=42, m=0)
+                vectors_config=models.VectorParams(size=size, distance=distance),
+                hnsw_config=models.HnswConfigDiff(payload_m=42, m=0)
             )
             self._create_index_for_collection(collection_name=collection_name)
         except Exception as e:
@@ -95,7 +88,7 @@ class QdrantDBClient:
             self._client.upsert(
                 collection_name=collection_name,
                 points=[
-                    PointStruct(
+                    models.PointStruct(
                         id=point_id,
                         payload={"user_id": user_id, "data": data},
                         vector=data_vector
@@ -121,9 +114,9 @@ class QdrantDBClient:
         records = self._client.query_points(
             collection_name=collection_name,
             query=query_vector,
-            query_filter=Filter(
+            query_filter=models.Filter(
                 must=[
-                    FieldCondition(key="user_id", match=MatchValue(value=user_id))
+                    models.FieldCondition(key="user_id", match=models.MatchValue(value=user_id))
                 ]
             ),
             limit=limit
