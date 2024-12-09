@@ -1,10 +1,11 @@
 # authentication/signup.py
 import streamlit as st
+from time import sleep
 
 from db.mysql.utils import register
 
 def signup():
-    st.header("Sign Up")
+    st.markdown("<h3 style='text-align: center;'>Sign Up</h3>", unsafe_allow_html=True)
 
     with st.form("signup_form"):
         new_username = st.text_input("Username: ")
@@ -19,7 +20,11 @@ def signup():
             elif not new_username or not new_password or not new_email or not confirm_password:
                 st.error("Please fill out all fields.")
             else:
-                register(new_username, new_password, new_email)
-                st.success("Registration successful! You can now log in.")
-                st.session_state.current_page = "login"
-                st.rerun()
+                id = register(new_username, new_password, new_email)
+                print(id)
+                st.session_state.authenticated = True
+                st.session_state.user_id = id
+                st.session_state.user_name = new_username
+                st.success("Registration successful! Logging you in.")
+                sleep(0.5)
+                st.switch_page("pages/landing.py")

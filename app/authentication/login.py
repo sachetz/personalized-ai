@@ -1,8 +1,10 @@
 import streamlit as st
+from time import sleep
+
 from db.mysql.utils import validate_login
 
 def login():
-    st.header("Log In")
+    st.markdown("<h3 style='text-align: center;'>Log In</h3>", unsafe_allow_html=True)
 
     with st.form("login_form"):
         username = st.text_input("Username: ")
@@ -12,11 +14,11 @@ def login():
         if submitted:
             try:
                 id = validate_login(username, password)
-                st.session_state.is_authenticated = True
-                st.session_state.current_page = "landing"
-                st.session_state.id = id
-                st.session_state.username = username
+                st.session_state.authenticated = True
+                st.session_state.user_id = id
+                st.session_state.user_name = username
                 st.success("Logged in successfully!")
-                st.rerun()
+                sleep(0.5)
+                st.switch_page("pages/landing.py")
             except Exception as e:
                 st.error("Invalid username or password.")
