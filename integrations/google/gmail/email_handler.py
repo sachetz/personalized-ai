@@ -7,10 +7,10 @@ from email import policy
 from email.parser import BytesParser
 
 from integrations.google.gmail.utils import robust_request
-from integrations.google.gmail.config import GMAIL_LOG_FILE_PATH
+from integrations.google.gmail.config import GMAIL_LOG_FILE
 from logger.logger import setup_logger
 
-logger = setup_logger(GMAIL_LOG_FILE_PATH)
+logger = setup_logger(GMAIL_LOG_FILE)
 
 def list_emails(service, user_id="me", query="", max_results=100):
     """

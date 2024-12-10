@@ -1,4 +1,5 @@
 import bcrypt
+from datetime import datetime
 
 from db.mysql.client import MySQLClient
 
@@ -26,3 +27,9 @@ def get_last_sync_at(user_id):
         return rows[0]["last_sync_at"]
     except Exception as e:
         raise RuntimeError("Unable to fetch last gmail sync at")
+
+def update_last_sync_at(user_id, last_sync_at):
+    try:
+        client.update("gmail_integration", {"last_sync_at": datetime.fromtimestamp(last_sync_at)}, "`user_id` = %s", (user_id, ))
+    except Exception as e:
+        raise RuntimeError("Unable to update gmail last sync at")

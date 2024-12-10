@@ -9,25 +9,26 @@ from google.auth.transport.requests import Request
 from googleapiclient.discovery import build
 
 from integrations.google.gmail.config import (
-    GMAIL_CREDENTIALS_PATH,
+    GMAIL_CREDENTIALS,
     GMAIL_TOKEN_PATH,
-    GMAIL_LOG_FILE_PATH
+    GMAIL_LOG_FILE
 )
 from logger.logger import setup_logger
 
-logger = setup_logger(GMAIL_LOG_FILE_PATH)
+logger = setup_logger(GMAIL_LOG_FILE)
 
-def authenticate_gmail():
+def authenticate_gmail(user_id: int):
     """
     Authenticate the user and return the Gmail service object.
     """
 
     scopes = ["https://www.googleapis.com/auth/gmail.readonly"]
     creds = None
+    token_path = GMAIL_TOKEN_PATH + str(user_id) + "_gmail_token.pickle"
 
     # Check if token.pickle exists (stores user"s access and refresh tokens)
-    if os.path.exists(GMAIL_TOKEN_PATH):
-        with open(GMAIL_TOKEN_PATH, "rb") as token:
+    if os.path.exists(token_path):
+        with open(token_path, "rb") as token:
             creds = pickle.load(token)
             logger.info("Loaded credentials from token.pickle")
 
@@ -41,14 +42,14 @@ def authenticate_gmail():
                 logger.error("Error refreshing credentials: %s", str(e))
         else:
             try:
-                flow = InstalledAppFlow.from_client_secrets_file(GMAIL_CREDENTIALS_PATH, scopes)
+                flow = InstalledAppFlow.from_client_secrets_file(GMAIL_CREDENTIALS, scopes)
                 creds = flow.run_local_server(port=0)
                 logger.info("Performed new authentication flow")
             except Exception as e:
                 logger.error("Error during authentication flow: %s", str(e))
                 raise e
         # Save the credentials for the next run
-        with open(GMAIL_TOKEN_PATH, "wb") as token:
+        with open(token_path, "wb") as token:
             pickle.dump(creds, token)
             logger.info("Saved new credentials to token.pickle")
 

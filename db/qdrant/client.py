@@ -84,7 +84,7 @@ class QdrantDBClient:
         """
 
         try:
-            point_id = uuid.uuid4()
+            point_id = str(uuid.uuid4())
             self._client.upsert(
                 collection_name=collection_name,
                 points=[
