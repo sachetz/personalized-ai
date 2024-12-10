@@ -9,3 +9,6 @@ streamlit==1.40.2
 bcrypt==4.2.1
 beautifulsoup4==4.12.3
 python-dateutil==2.9.0.post0
+langgraph==0.2.56
+langchain-community==0.3.10
+ipython==8.30.0
