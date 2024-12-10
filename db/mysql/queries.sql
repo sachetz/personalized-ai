@@ -6,3 +6,10 @@ CREATE TABLE users (
     password_hash VARCHAR(255) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE gmail_integration (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL UNIQUE,
+    last_sync_at TIMESTAMP DEFAULT '1970-01-01 00:00:01',
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);

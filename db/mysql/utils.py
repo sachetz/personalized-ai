@@ -14,6 +14,15 @@ def validate_login(username, password):
 def register(username, password, email):
     try:
         password_hash = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
-        return client.insert("users", {"username": username, "password_hash": password_hash, "email": email, "user_role": "user"})
+        id = client.insert("users", {"username": username, "password_hash": password_hash, "email": email, "user_role": "user"})
+        client.insert("gmail_integration", {"user_id": id})
+        return id
     except Exception as e:
         raise RuntimeError("Unable to register")
+
+def get_last_sync_at(user_id):
+    try:
+        rows = client.execute_query(f"SELECT last_sync_at FROM gmail_integration WHERE user_id={user_id}")
+        return rows[0]["last_sync_at"]
+    except Exception as e:
+        raise RuntimeError("Unable to fetch last gmail sync at")
