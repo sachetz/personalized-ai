@@ -20,7 +20,7 @@ def fetch_emails(user_id:int, last_sync_at: int, batch_size: int = 50):
     service = authenticate_gmail(user_id)
 
     # Define the search query
-    query = f"after:{last_sync_at * 1000}"
+    query = f"after:{last_sync_at}"
 
     # List emails
     logger.info("Listing emails...")
