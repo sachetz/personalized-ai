@@ -12,6 +12,7 @@ from langchain_openai import ChatOpenAI
 from langchain_community.tools.tavily_search import TavilySearchResults
 
 from app.utils.navigation import make_sidebar
+from integrations.google.gmail.tool import email_search_tool
 
 load_dotenv()
 make_sidebar()
@@ -23,7 +24,7 @@ class State(TypedDict):
 graph_builder = StateGraph(State)
 
 searchTool = TavilySearchResults(max_results=2)
-tools = [searchTool]
+tools = [searchTool, email_search_tool]
 
 llm = ChatOpenAI(model="gpt-4o", temperature=0.4)
 llm = llm.bind_tools(tools)
@@ -32,7 +33,7 @@ memory = MemorySaver()
 def chatbot(state: State):
     return {"messages": [llm.invoke(state["messages"])]}
 
-tool_node = ToolNode(tools=[searchTool])
+tool_node = ToolNode(tools=tools)
 graph_builder.add_node("tools", tool_node)
 graph_builder.add_node("chatbot", chatbot)
 
@@ -47,7 +48,7 @@ graph_builder.add_edge("tools", "chatbot")
 graph = graph_builder.compile(checkpointer=memory)
 
 def stream_graph_updates(user_input: str):
-    config = {"configurable": {"thread_id": st.session_state.user_id}}
+    config = {"configurable": {"thread_id": st.session_state.user_id, "user_id": st.session_state.user_id}}
     messages = []
     if "message_history" in st.session_state:
         for hist in st.session_state.message_history:
