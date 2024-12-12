@@ -47,9 +47,14 @@ graph_builder.add_edge("tools", "chatbot")
 graph = graph_builder.compile(checkpointer=memory)
 
 def stream_graph_updates(user_input: str):
-    events = graph.stream(
-        {"messages": [("user", user_input)]}, {"configurable": {"thread_id": "1"}}
-    )
+    config = {"configurable": {"thread_id": st.session_state.user_id}}
+    messages = []
+    if "message_history" in st.session_state:
+        for hist in st.session_state.message_history:
+            if hist["role"] in ("user", "ai"):
+                messages.append(("user" if hist["role"] == "user" else "ai", hist["content"]))
+    messages.append(("user", user_input))
+    events = graph.stream({"messages": messages}, config)
 
     tool_details = []
     final_response = ""
