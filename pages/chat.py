@@ -13,6 +13,7 @@ from langchain_community.tools.tavily_search import TavilySearchResults
 
 from app.utils.navigation import make_sidebar
 from integrations.google.gmail.tool import email_search_tool
+from integrations.google.calendar.tool import calendar_event_create_tool
 
 load_dotenv()
 make_sidebar()
@@ -22,7 +23,7 @@ class State(TypedDict):
 graph_builder = StateGraph(State)
 
 searchTool = TavilySearchResults(max_results=2)
-tools = [searchTool, email_search_tool]
+tools = [searchTool, email_search_tool, calendar_event_create_tool]
 
 llm = ChatOpenAI(model="gpt-4o", temperature=0.4)
 llm = llm.bind_tools(tools)

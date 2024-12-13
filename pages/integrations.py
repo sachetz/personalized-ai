@@ -1,8 +1,11 @@
-import streamlit as st
 from time import sleep
+
+import streamlit as st
+
 from db.mysql.utils import get_last_sync_at
 from app.utils.navigation import make_sidebar
 from integrations.google.gmail.sync import sync
+from integrations.google.calendar.auth import authenticate_google_calendar
 
 make_sidebar()
 
@@ -21,4 +24,12 @@ if st.button("Connect/Sync"):
 
 st.header("Calendar Integration")
 if st.button("Connect"):
-    pass
+    try:
+        st.success("Authentication Started")
+        authenticate_google_calendar(st.session_state.user_id)
+        st.success("Authentication Completed")
+        sleep(0.5)
+        st.rerun()
+    except Exception as e:
+        st.error("Authentication Failed")
+        print(repr(e))
