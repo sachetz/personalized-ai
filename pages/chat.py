@@ -17,8 +17,6 @@ from integrations.google.gmail.tool import email_search_tool
 load_dotenv()
 make_sidebar()
 
-st.title("Personalized AI Assistant")
-
 class State(TypedDict):
     messages: Annotated[list, add_messages]
 graph_builder = StateGraph(State)
@@ -46,6 +44,16 @@ graph_builder.add_conditional_edges(
 graph_builder.add_edge("tools", "chatbot")
 
 graph = graph_builder.compile(checkpointer=memory)
+
+def render_chat_history():
+    for message in st.session_state.get("message_history", []):
+        if message["role"] in ("user", "ai"):
+            with st.chat_message(message["role"]):
+                st.write(message["content"])
+        else:
+            with st.expander("Tool usage"):
+                for msg in message["content"]:
+                    st.write(msg)
 
 def stream_graph_updates(user_input: str):
     config = {"configurable": {"thread_id": st.session_state.user_id, "user_id": st.session_state.user_id}}
@@ -90,16 +98,22 @@ def stream_graph_updates(user_input: str):
     return final_response
 
 
-user_input = st.chat_input("User: ")
+def reset_chat():
+    st.session_state.message_history = []
+    render_chat_history()
+
+
+col1, col2 = st.columns([0.8, 0.2])
+with col1:
+    st.title("Personalized AI Assistant")
+with col2:
+    st.button("New", on_click=reset_chat)
+
+render_chat_history()
+
+user_input = st.chat_input("What would you like to ask?")
 if user_input:
-    for message in st.session_state.get("message_history", []):
-        if message["role"] in ("user", "ai"):
-            with st.chat_message(message["role"]):
-                st.write(message["content"])
-        else:
-            with st.expander("Tool usage"):
-                for msg in message["content"]:
-                    st.write(msg)
+    # render_chat_history()
     with st.chat_message("user"):
         history = st.session_state.get("message_history", []) + [{"role": "user", "content": user_input}]
         st.session_state.message_history = history
