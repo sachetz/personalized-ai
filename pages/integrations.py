@@ -1,4 +1,5 @@
 from time import sleep
+from datetime import datetime
 
 import streamlit as st
 
@@ -11,7 +12,12 @@ make_sidebar()
 
 gmail_last_sync_at = get_last_sync_at(st.session_state.user_id)
 st.header("Gmail Integration")
-st.write("Last Sync At: " + gmail_last_sync_at.strftime("%c"))
+st.write("Last Sync At: " + (
+        gmail_last_sync_at.strftime("%c") 
+        if gmail_last_sync_at > datetime.strptime("Thu Jan 1 00:00:01 1970", "%c")
+        else "None"
+    )
+)
 if st.button("Connect/Sync"):
     try:
         st.success("Sync Started")
@@ -23,7 +29,7 @@ if st.button("Connect/Sync"):
         st.error("Sync Failed")
 
 st.header("Calendar Integration")
-if st.button("Connect"):
+if st.button("Connect/Refresh"):
     try:
         st.success("Authentication Started")
         authenticate_google_calendar(st.session_state.user_id)
